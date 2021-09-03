@@ -55,4 +55,23 @@ router.post('/', (req, res) => {
     }
 })
 
+router.put('/:id', (req, res) => {
+    const updateAct = req.body
+    if(!updateAct.project_id || !updateAct.description || !updateAct.notes) {
+        res.status(400).json({ message: 'Please provide notes, description, and project_id' })
+    } else {
+        Action.update(req.params.id, updateAct)
+            .then(({ id }) => {
+                return Action.get(id)
+            })
+            .then(action => {
+                res.status(201).json(action)
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(500).json({ message: 'Error while trying to update action' })
+            })
+    }
+})
+
 module.exports = router
