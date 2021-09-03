@@ -7,4 +7,18 @@ const server = express();
 // Do NOT `server.listen()` inside this file!
 server.use(express.json())
 
+const projectsRouter = require('./projects/projects-router')
+const actionsRouter = require('./actions/actions-router')
+
+server.use('/api/projects', projectsRouter)
+server.use('/api/actions', actionsRouter)
+
+// sanity check endpoint
+server.get('/', (req, res) => {
+    res.send(`
+    <h1>API</h1>
+    <p>Welcome to the API</p>
+    `)
+})
+
 module.exports = server;
