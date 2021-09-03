@@ -6,18 +6,13 @@ const router = express.Router()
 const Project = require('./projects-model')
 
 // PROJECTS ENDPOINTS
-router.get('/', (req, res) => {
+router.get('/', (req, res, next) => {
     // console.log('get request attempted')
     Project.get()
         .then(projects => {
             res.status(200).json(projects)
         })
-        .catch(err => {
-            console.log(err)
-            res.status(500).json({
-                message: 'Error retrieving the projects'
-            })
-        })
+        .catch(next)
 })
 
 router.get('/:id', (req, res) => {
@@ -103,6 +98,15 @@ router.get('/:id/actions', (req, res) => {
             console.log(err)
             res.status(500).json({ message: 'Actions could not be retrieved' })
         })
+})
+
+// eslint-disable-next-line
+router.use((err, req, res, next) => {
+    console.log(err.message)
+    res.status(err.status || 500).json({
+        message: err.message,
+        customMessage: 'Request could not be performed'
+    })
 })
 
 module.exports = router
