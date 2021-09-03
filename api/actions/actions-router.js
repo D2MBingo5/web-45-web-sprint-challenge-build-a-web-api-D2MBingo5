@@ -36,4 +36,23 @@ router.get('/:id', (req, res) => {
         })
 })
 
+router.post('/', (req, res) => {
+    const newAct = req.body
+    if(!newAct.project_id || !newAct.description || !newAct.notes) {
+        res.status(400).json({ message: 'Please provide notes, description, and project_id' })
+    } else {
+        Action.insert(newAct)
+            .then(({ id }) => {
+                return Action.get(id)
+            })
+            .then(action => {
+                res.status(201).json(action)
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(500).json({ message: 'Error while trying to save action to database' })
+            })
+    }
+})
+
 module.exports = router
