@@ -56,6 +56,7 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
     // putting 'completed: true' works, but putting 'completed: false' throws a 400 error. Putting 'completed: "string"' returns 'completed: false'. I'm very confused
+    // this (functionally) same code block passes when used for actions; there's just something about the completed field boolean that I don't know how to work with
     const updateProj = req.body
     if(!updateProj.name || !updateProj.description || !updateProj.completed) {
         res.status(400).json({ message: 'Please provide name, description, and completion status' })
