@@ -6,18 +6,15 @@ const router = express.Router()
 const Action = require('./actions-model')
 
 // ACTIONS ENDPOINTS
-router.get('/', (req, res) => {
+router.get('/', (req, res, next) => {
     Action.get()
         .then(actions => {
             res.status(200).json(actions)
         })
-        .catch(err => {
-            console.log(err)
-            res.status(500).json({ message: 'Error retrieving the actions'})            
-        })
+        .catch(next)
 })
 
-router.get('/:id', (req, res) => {
+router.get('/:id', (req, res, next) => {
     Action.get(req.params.id)
         .then(action => {
             if (action) {
@@ -28,15 +25,10 @@ router.get('/:id', (req, res) => {
                 })
             }            
         })
-        .catch(err => {
-            console.log(err)
-            res.status(500).json({
-                message: 'Error receiving the action'
-            })
-        })
+        .catch(next)
 })
 
-router.post('/', (req, res) => {
+router.post('/', (req, res, next) => {
     const newAct = req.body
     if(!newAct.project_id || !newAct.description || !newAct.notes) {
         res.status(400).json({ message: 'Please provide notes, description, and project_id' })
@@ -48,14 +40,11 @@ router.post('/', (req, res) => {
             .then(action => {
                 res.status(201).json(action)
             })
-            .catch(err => {
-                console.log(err)
-                res.status(500).json({ message: 'Error while trying to save action to database' })
-            })
+            .catch(next)
     }
 })
 
-router.put('/:id', (req, res) => {
+router.put('/:id', (req, res, next) => {
     const updateAct = req.body
     if(!updateAct.project_id || !updateAct.description || !updateAct.notes) {
         res.status(400).json({ message: 'Please provide notes, description, and project_id' })
@@ -67,14 +56,11 @@ router.put('/:id', (req, res) => {
             .then(action => {
                 res.status(201).json(action)
             })
-            .catch(err => {
-                console.log(err)
-                res.status(500).json({ message: 'Error while trying to update action' })
-            })
+            .catch(next)
     }
 })
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', (req, res, next) => {
     Action.remove(req.params.id)
         .then(act => {
             if (act) {
@@ -83,10 +69,16 @@ router.delete('/:id', (req, res) => {
                 res.status(404).json({ message: 'Action not found' })
             }
         })
-        .catch(err => {
-            console.log(err)
-            res.status(500).json({ message: 'Action could not be removed' })
-        })
+        .catch(next)
+})
+
+// eslint-disable-next-line
+router.use((err, req, res, next) => {
+    console.log(err.message)
+    res.status(err.status || 500).json({
+        message: err.message,
+        customMessage: 'Request could not be performed'
+    })
 })
 
 module.exports = router
