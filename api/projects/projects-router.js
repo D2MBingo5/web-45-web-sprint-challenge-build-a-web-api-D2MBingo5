@@ -55,26 +55,22 @@ router.post('/', (req, res) => {
 })
 
 router.put('/:id', (req, res) => {
-    const possibleProj = Project.get(req.params.id)
-    if(!possibleProj) {
-        res.status(404).json({ message: 'Post not found' })
+    // putting 'completed: true' works, but putting 'completed: false' throws a 400 error. Putting 'completed: "string"' returns 'completed: false'. I'm very confused
+    const updateProj = req.body
+    if(!updateProj.name || !updateProj.description || !updateProj.completed) {
+        res.status(400).json({ message: 'Please provide name, description, and completion status' })
     } else {
-        if(!req.body.name || !req.body.description || !req.body.completed) { // putting 'completed: true' works, but putting 'completed: false' throws a 400 error. Putting 'completed: "string"' returns 'completed: false'. I'm very confused
-            res.status(400).json({ message: 'Please provide name, description, and completion status' })            
-        } else {
-            Project.update(req.params.id, req.body)
-                .then(() => {
-                    return Project.get(req.params.id)
-                })
-                .then(project => {
-                    res.status(200).json(project)
-                })
-                .catch(err => {
-                    console.log(err)
-                    res.status(500).json({ message: 'The project information could not be updated' 
-                })
+        Project.update(req.params.id, updateProj)
+            .then(({ id }) => {
+                return Project.get(id)
             })
-        }
+            .then(action => {
+                res.status(201).json(action)
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(500).json({ message: 'Error while trying to update project' })
+            })
     }
 })
 
