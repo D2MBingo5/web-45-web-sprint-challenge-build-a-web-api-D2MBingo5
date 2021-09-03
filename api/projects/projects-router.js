@@ -71,10 +71,26 @@ router.put('/:id', (req, res) => {
                 })
                 .catch(err => {
                     console.log(err)
-                    res.status(500).json({ message: 'The project information could not be updated' })
+                    res.status(500).json({ message: 'The project information could not be updated' 
+                })
             })
         }
     }
+})
+
+router.delete('/:id', (req, res) => {
+    Project.remove(req.params.id)
+        .then(proj => {
+            if (proj) {
+                res.json(proj)
+            } else {
+                res.status(404).json({ message: 'Project not found' })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({ message: 'Project could not be removed' })
+        })
 })
 
 module.exports = router
