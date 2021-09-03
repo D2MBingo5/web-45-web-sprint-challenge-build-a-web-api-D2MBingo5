@@ -15,7 +15,7 @@ router.get('/', (req, res, next) => {
         .catch(next)
 })
 
-router.get('/:id', (req, res) => {
+router.get('/:id', (req, res, next) => {
     Project.get(req.params.id)
         .then(project => {
             if (project) {
@@ -24,13 +24,10 @@ router.get('/:id', (req, res) => {
                 res.status(404).json({ message: 'Project could not be found' })
             }
         })
-        .catch(err => {
-            console.log(err)
-            res.status(500).json({ message: 'Error receiving the project'})
-        })
+        .catch(next)
 })
 
-router.post('/', (req, res) => {
+router.post('/', (req, res, next) => {
     const newProj = req.body
     if(!newProj.name || !newProj.description) {
         res.status(400).json({ message: 'Please provide name and description' })
@@ -42,14 +39,11 @@ router.post('/', (req, res) => {
             .then(project => {
                 res.status(201).json(project)
             })
-            .catch(err => {
-                console.log(err)
-                res.status(500).json({ message: 'Error while saving post to database' })
-            })
+            .catch(next)
     }
 })
 
-router.put('/:id', (req, res) => {
+router.put('/:id', (req, res, next) => {
     // putting 'completed: true' works, but putting 'completed: false' throws a 400 error. Putting 'completed: "string"' returns 'completed: false'. I'm very confused
     // this (functionally) same code block passes when used for actions; there's just something about the completed field boolean that I don't know how to work with
     const updateProj = req.body
@@ -63,14 +57,11 @@ router.put('/:id', (req, res) => {
             .then(action => {
                 res.status(201).json(action)
             })
-            .catch(err => {
-                console.log(err)
-                res.status(500).json({ message: 'Error while trying to update project' })
-            })
+            .catch(next)
     }
 })
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', (req, res, next) => {
     Project.remove(req.params.id)
         .then(proj => {
             if (proj) {
@@ -79,13 +70,10 @@ router.delete('/:id', (req, res) => {
                 res.status(404).json({ message: 'Project not found' })
             }
         })
-        .catch(err => {
-            console.log(err)
-            res.status(500).json({ message: 'Project could not be removed' })
-        })
+        .catch(next)
 })
 
-router.get('/:id/actions', (req, res) => {
+router.get('/:id/actions', (req, res, next) => {
     Project.getProjectActions(req.params.id)
         .then(acts => {
             if (req.params.id) {
@@ -94,10 +82,7 @@ router.get('/:id/actions', (req, res) => {
                 res.status(404).json({ message: 'Project not found' })
             }
         })
-        .catch(err => {
-            console.log(err)
-            res.status(500).json({ message: 'Actions could not be retrieved' })
-        })
+        .catch(next)
 })
 
 // eslint-disable-next-line
