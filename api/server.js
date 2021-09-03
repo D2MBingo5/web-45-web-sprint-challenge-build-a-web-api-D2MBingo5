@@ -13,7 +13,7 @@ const actionsRouter = require('./actions/actions-router')
 server.use('/api/projects', projectsRouter)
 server.use('/api/actions', actionsRouter)
 
-// sanity check endpoint
+// sanity check / default route endpoint
 server.get('/', (req, res) => {
     res.send(`
     <h1>API</h1>
