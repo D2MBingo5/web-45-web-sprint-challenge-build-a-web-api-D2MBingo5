@@ -93,4 +93,19 @@ router.delete('/:id', (req, res) => {
         })
 })
 
+router.get('/:id/actions', (req, res) => {
+    Project.getProjectActions(req.params.id)
+        .then(acts => {
+            if (req.params.id) {
+                res.json(acts)
+            } else {
+                res.status(404).json({ message: 'Project not found' })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({ message: 'Actions could not be retrieved' })
+        })
+})
+
 module.exports = router
