@@ -59,7 +59,7 @@ router.put('/:id', (req, res) => {
     if(!possibleProj) {
         res.status(404).json({ message: 'Post not found' })
     } else {
-        if(!req.body.name || !req.body.description || !req.body.completed) { // no idea why including || !req.body.completed causes tests 8 and 9 to fail, but causes test 10 to pass while removing || !req.body.completed causes tests 8 and 9 to pass, but causes test 10 to fail. (I know why test 10 fails to pass.)
+        if(!req.body.name || !req.body.description || !req.body.completed) { // putting 'completed: true' works, but putting 'completed: false' throws a 400 error. Putting 'completed: "string"' returns 'completed: false'. I'm very confused
             res.status(400).json({ message: 'Please provide name, description, and completion status' })            
         } else {
             Project.update(req.params.id, req.body)
